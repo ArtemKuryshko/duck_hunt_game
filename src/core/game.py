@@ -15,6 +15,7 @@ class Game:
         self.background = pygame.image.load(BG_PATH).convert()
         self.trees = pygame.image.load(TREES_PATH).convert_alpha()
         self.grass = pygame.image.load(GRASS_PATH).convert_alpha()
+        self.scoreboard = pygame.image.load(SCOREBOARD_PATH).convert_alpha()
 
     def process_events(self):  
         for event in pygame.event.get():
@@ -27,7 +28,8 @@ class Game:
     def draw(self):
         self.screen.blit(self.background, (0, 0))
         self.screen.blit(self.trees, (0, 0))
-        self.screen.blit(self.grass, (0, 0))
+        self.screen.blit(self.grass, (0, -20))
+        self.screen.blit(self.scoreboard, (100, 490))
         pygame.display.flip()
 
     def run(self):
