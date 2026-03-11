@@ -17,6 +17,7 @@ class Game:
         self.grass = pygame.image.load(GRASS_PATH).convert_alpha()
         #self.white_duck = DuckFactory.create_duck("WhiteDuck", 400, 100) 
 
+        self.scoreboard = pygame.image.load(SCOREBOARD_PATH).convert_alpha()
 
     def process_events(self):  
         for event in pygame.event.get():
@@ -31,6 +32,8 @@ class Game:
         self.screen.blit(self.trees, (0, 0))
         #self.screen.blit(self.white_duck.image, self.white_duck.rect)
         self.screen.blit(self.grass, (0, 0))
+        self.screen.blit(self.grass, (0, -20))
+        self.screen.blit(self.scoreboard, (100, 490))
         pygame.display.flip()
 
     def run(self):
