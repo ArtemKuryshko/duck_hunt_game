@@ -1,7 +1,7 @@
 import pygame
 import sys
 from config import *
-
+from factories.duckFactory import DuckFactory
 class Game:
     def __init__(self):
         pygame.init()
@@ -15,6 +15,8 @@ class Game:
         self.background = pygame.image.load(BG_PATH).convert()
         self.trees = pygame.image.load(TREES_PATH).convert_alpha()
         self.grass = pygame.image.load(GRASS_PATH).convert_alpha()
+        #self.white_duck = DuckFactory.create_duck("WhiteDuck", 400, 100) 
+
         self.scoreboard = pygame.image.load(SCOREBOARD_PATH).convert_alpha()
 
     def process_events(self):  
@@ -28,6 +30,8 @@ class Game:
     def draw(self):
         self.screen.blit(self.background, (0, 0))
         self.screen.blit(self.trees, (0, 0))
+        #self.screen.blit(self.white_duck.image, self.white_duck.rect)
+        self.screen.blit(self.grass, (0, 0))
         self.screen.blit(self.grass, (0, -20))
         self.screen.blit(self.scoreboard, (100, 490))
         pygame.display.flip()
@@ -37,7 +41,7 @@ class Game:
             self.process_events()
             self.update()
             self.draw()
-            self.clock.tick(FPS) # Контроль кадрів через константу
+            self.clock.tick(FPS) 
         
         pygame.quit()
         sys.exit()

@@ -1,0 +1,14 @@
+from .base import BaseBird
+from typing import Dict, List
+import pygame
+class WhiteDuck(BaseBird):
+    def __init__(self, x: int, y: int, animations: Dict[str, List[pygame.Surface]]):
+        super().__init__(x, y, animations)
+
+        self.health = 1
+        self.speed = 1
+        
+    def move(self):
+        pass
+    def animate(self):
+        pass
