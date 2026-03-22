@@ -1,4 +1,11 @@
 import os
+from enum import Enum, auto
+
+
+class GameState(Enum):
+    MAIN_MENU = auto()
+    GAME = auto()
+    SHOP = auto()
 
 
 SCREEN_WIDTH = 800
