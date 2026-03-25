@@ -16,10 +16,17 @@ TITLE = "Duck Hunt"
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 ASSETS_DIR = os.path.normpath(os.path.join(BASE_DIR, "..", "assets"))
+FONT_PATH = os.path.join(ASSETS_DIR, "fonts", "pixelify.ttf")
 BG_PATH = os.path.join(ASSETS_DIR, "images", "backgrounds", "Background.png")
 TREES_PATH = os.path.join(ASSETS_DIR, "images", "backgrounds", "Trees.png")
 GRASS_PATH = os.path.join(ASSETS_DIR, "images", "backgrounds", "Grass.png")
 ANIMATIONS_PATH = os.path.join(ASSETS_DIR, "images", "models", "birds")
 SCOREBOARD_PATH = os.path.join(ASSETS_DIR, "images", "interface", "Scoreboard.png")
+<<<<<<< HEAD
 SHOPICON_PATH = os.path.join(ASSETS_DIR, "images", "interface", "ShopIcon.png")
 WEAPONS_PATH = os.path.join(ASSETS_DIR, "images", "models", "weapons")
+=======
+HEART_PATH = os.path.join(ASSETS_DIR, "images", "interface", "HeartIcon.png")
+GREY_HEART_PATH = os.path.join(ASSETS_DIR, "images", "interface", "GreyHeartIcon.png")
+CROSSHAIR_PATH = os.path.join(ASSETS_DIR, "images", "interface", "Crosshair.png")
+>>>>>>> dev
