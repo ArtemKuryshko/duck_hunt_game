@@ -87,7 +87,6 @@ class Game:
         if self.state == GameState.GAME:
             self.level_manager.draw(self.screen)
 
-        self.screen.blit(self.grass, (0, 0))
         self.screen.blit(self.grass, (0, -20))
         self.screen.blit(self.scoreboard, (100, 490))
 
