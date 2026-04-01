@@ -29,16 +29,16 @@ class LevelManager:
         for bird in self.birds[:]:
             bird.update()
             
-            # Check if bird is dead
             if not bird.isAlive:
                 self.score_system.add_score(10)
-                self.birds.remove(bird)
+                if bird in self.birds:
+                    self.birds.remove(bird)
                 continue
 
-            # Check if bird flew off-screen
             if bird.y < -150:
                 self.on_bird_escape()
-                self.birds.remove(bird)
+                if bird in self.birds:
+                    self.birds.remove(bird)
 
     def draw(self, screen: pygame.Surface):
         for bird in self.birds:
