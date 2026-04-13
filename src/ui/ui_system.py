@@ -5,12 +5,14 @@ from config import (
     HEART_PATH,
     GREY_HEART_PATH,
     CROSSHAIR_PATH,
+    FONT_PATH
 )
 
 
 class UISystem:
     def __init__(self, font: pygame.font.Font):
         self.font = font
+        self.small_font = pygame.font.Font(FONT_PATH, 16)
         self.heart_full = pygame.image.load(HEART_PATH).convert_alpha()
         self.heart_empty = pygame.image.load(GREY_HEART_PATH).convert_alpha()
         self.crosshair = pygame.image.load(CROSSHAIR_PATH).convert_alpha()
@@ -30,12 +32,17 @@ class UISystem:
             else:
                 screen.blit(self.heart_empty, (x_pos, y_pos))
 
-    def draw_game_ui(self, screen: pygame.Surface, score: int, health: int):
+    def draw_game_ui(self, screen: pygame.Surface, score: int, health: int, current_weapon):
         # Draw score
         score_text = self.font.render(f"{score}", False, (255, 255, 255))
         screen.blit(score_text, (240, 540))
 
         self.draw_health_ui(screen, health)
+        if current_weapon.is_reloading:
+            ammo_surf = self.small_font.render("......", True, (255, 0, 0))
+        else:
+            ammo_surf = self.small_font.render(f"{current_weapon.current_ammo} / {current_weapon.ammo_capacity}", True, (255, 255, 255))
+        screen.blit(ammo_surf, (616, 530))
 
     def draw_crosshair(self, screen: pygame.Surface):
         pos = pygame.mouse.get_pos()
