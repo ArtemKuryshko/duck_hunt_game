@@ -31,14 +31,16 @@ class LevelManager:
 
             if not bird.isAlive:
                 self.score_system.add_score(10)
-                self.birds.remove(bird)
+                if bird in self.birds:
+                    self.birds.remove(bird)
                 continue
 
             OFFSCREEN_MARGIN = 50
 
             if (bird.x < -OFFSCREEN_MARGIN or bird.x > SCREEN_WIDTH + OFFSCREEN_MARGIN or bird.y < -OFFSCREEN_MARGIN or bird.y > SCREEN_HEIGHT + OFFSCREEN_MARGIN):
                 self.on_bird_escape()
-                self.birds.remove(bird)
+                if bird in self.birds:
+                    self.birds.remove(bird)
 
 
     def draw(self, screen: pygame.Surface):
