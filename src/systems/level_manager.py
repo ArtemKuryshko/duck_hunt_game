@@ -35,7 +35,7 @@ class LevelManager:
                     if bird in self.birds:
                         self.birds.remove(bird)
                 else:
-                    self.score_system.add_score(10)
+                    self.score_system.add_score(bird.kill_points)
                     if bird in self.birds:
                         self.birds.remove(bird)
                 continue

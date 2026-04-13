@@ -12,7 +12,6 @@ class ScoreSystem:
 
     def deduct_health(self, damage: int = 1):
         self.health -= damage
-        print("Health deducted:", damage, "Current health:", self.health)
         if self.health <= 0:
             if self.on_game_over:
                 self.on_game_over()

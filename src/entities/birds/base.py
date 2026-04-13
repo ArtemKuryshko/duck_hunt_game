@@ -17,6 +17,7 @@ class BaseBird(pygame.sprite.Sprite, ABC):
 
         self.health = 0
         self.damage = 0
+        self.kill_points = 0
         self.isAlive = True
         self.flipped = False  # чи летить ліворуч
         self.down = False
