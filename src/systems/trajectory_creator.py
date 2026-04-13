@@ -7,7 +7,7 @@ class BirdTrajectory:
 
     OFFSCREEN_MARGIN = 100
     EDGE_PADDING = 50
-    MIN_SPAWN_Y = 450
+    MIN_SPAWN_Y = 420
 
     def __init__(self, speed: float, spawn_point: tuple | None = None):
         self.sw = SCREEN_WIDTH

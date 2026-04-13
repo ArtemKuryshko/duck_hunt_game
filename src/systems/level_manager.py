@@ -3,6 +3,7 @@ import random
 from config import SCREEN_WIDTH, SCREEN_HEIGHT
 from factories.duckFactory import DuckFactory
 from entities.birds.base import BaseBird
+from entities.birds.badCrow import BadCrow
 from typing import List, Callable
 
 class LevelManager:
@@ -16,7 +17,7 @@ class LevelManager:
     def spawn_bird(self):
         x = random.choice([-50, SCREEN_WIDTH + 50])
         y = random.randint(50, 450)
-        duck_type = random.choice(["WhiteDuck", "GreenDuck", "BadCrow"])
+        duck_type = random.choices(["WhiteDuck", "GreenDuck", "BadCrow"], weights=[0.5, 0.4, 0.1])[0]
         bird = DuckFactory.create_duck(duck_type, x, y)
         self.birds.append(bird)
 
@@ -38,9 +39,10 @@ class LevelManager:
             OFFSCREEN_MARGIN = 50
 
             if (bird.x < -OFFSCREEN_MARGIN or bird.x > SCREEN_WIDTH + OFFSCREEN_MARGIN or bird.y < -OFFSCREEN_MARGIN or bird.y > SCREEN_HEIGHT + OFFSCREEN_MARGIN):
-                self.on_bird_escape()
-                if bird in self.birds:
-                    self.birds.remove(bird)
+                if bird.damage == 0:
+                    self.on_bird_escape()
+                    if bird in self.birds:
+                        self.birds.remove(bird)
 
 
     def draw(self, screen: pygame.Surface):
