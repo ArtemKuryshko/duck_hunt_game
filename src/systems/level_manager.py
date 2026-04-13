@@ -11,11 +11,11 @@ class LevelManager:
         self.on_bird_escape = on_bird_escape
         self.birds: List[BaseBird] = []
         self.spawn_timer = 0
-        self.spawn_interval = 2000 # 2 seconds
+        self.spawn_interval = 5000 # 2 seconds
 
     def spawn_bird(self):
-        x = random.randint(100, SCREEN_WIDTH - 200)
-        y = SCREEN_HEIGHT
+        x = random.choice([-50, SCREEN_WIDTH + 50])
+        y = random.randint(50, 450)
         duck_type = random.choice(["WhiteDuck", "GreenDuck", "BadCrow"])
         bird = DuckFactory.create_duck(duck_type, x, y)
         self.birds.append(bird)
@@ -28,17 +28,19 @@ class LevelManager:
 
         for bird in self.birds[:]:
             bird.update()
-            
-            # Check if bird is dead
+
             if not bird.isAlive:
                 self.score_system.add_score(10)
                 self.birds.remove(bird)
                 continue
 
-            # Check if bird flew off-screen
-            if bird.y < -150:
+            OFFSCREEN_MARGIN = 50
+
+            if (bird.x < -OFFSCREEN_MARGIN or bird.x > SCREEN_WIDTH + OFFSCREEN_MARGIN or bird.y < -OFFSCREEN_MARGIN or bird.y > SCREEN_HEIGHT + OFFSCREEN_MARGIN):
                 self.on_bird_escape()
                 self.birds.remove(bird)
+                print(f"Removed bird at ({bird.x}, {bird.y})")
+
 
     def draw(self, screen: pygame.Surface):
         for bird in self.birds:
