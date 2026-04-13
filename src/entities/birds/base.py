@@ -16,6 +16,8 @@ class BaseBird(pygame.sprite.Sprite, ABC):
         self.y = y
 
         self.health = 0
+        self.damage = 0
+        self.kill_points = 0
         self.isAlive = True
         self.flipped = False  # чи летить ліворуч
         self.down = False
@@ -91,6 +93,8 @@ class BaseBird(pygame.sprite.Sprite, ABC):
         self.rect = self.image.get_rect(center=(int(self.x), int(self.y)))
 
     def update(self):
+        if self.health <= 0:
+            self.isAlive = False
         if self.isAlive:
             self.animate()
             self.move()
