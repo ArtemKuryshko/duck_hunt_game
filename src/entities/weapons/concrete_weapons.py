@@ -11,7 +11,7 @@ class Pistol(BaseWeapon):
         if super().shoot(mouse_pos, birds):
             for bird in birds:
                 if bird.rect.collidepoint(mouse_pos):
-                    bird.isAlive = False
+                    bird.health -= 1
                     break
             return True
         return False
@@ -24,7 +24,7 @@ class Revolver(BaseWeapon):
         if super().shoot(mouse_pos, birds):
             for bird in birds:
                 if bird.rect.collidepoint(mouse_pos):
-                    bird.isAlive = False
+                    bird.health -= 2
                     break
             return True
         return False
@@ -37,7 +37,7 @@ class LightRifle(BaseWeapon):
         if super().shoot(mouse_pos, birds):
             for bird in birds:
                 if bird.rect.collidepoint(mouse_pos):
-                    bird.isAlive = False
+                    bird.health -= 1
                     break
             return True
         return False

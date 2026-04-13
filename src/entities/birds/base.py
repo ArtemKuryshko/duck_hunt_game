@@ -91,6 +91,8 @@ class BaseBird(pygame.sprite.Sprite, ABC):
         self.rect = self.image.get_rect(center=(int(self.x), int(self.y)))
 
     def update(self):
+        if self.health <= 0:
+            self.isAlive = False
         if self.isAlive:
             self.animate()
             self.move()
