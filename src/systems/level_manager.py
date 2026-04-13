@@ -3,7 +3,6 @@ import random
 from config import SCREEN_WIDTH, SCREEN_HEIGHT
 from factories.duckFactory import DuckFactory
 from entities.birds.base import BaseBird
-from entities.birds.badCrow import BadCrow
 from typing import List, Callable
 
 class LevelManager:
@@ -31,9 +30,14 @@ class LevelManager:
             bird.update()
 
             if not bird.isAlive:
-                self.score_system.add_score(10)
-                if bird in self.birds:
-                    self.birds.remove(bird)
+                if bird.damage > 0:
+                    self.score_system.deduct_health(damage = bird.damage)
+                    if bird in self.birds:
+                        self.birds.remove(bird)
+                else:
+                    self.score_system.add_score(10)
+                    if bird in self.birds:
+                        self.birds.remove(bird)
                 continue
 
             OFFSCREEN_MARGIN = 50
