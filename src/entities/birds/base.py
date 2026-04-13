@@ -18,6 +18,7 @@ class BaseBird(pygame.sprite.Sprite, ABC):
         self.health = 0
         self.isAlive = True
         self.flipped = False  # чи летить ліворуч
+        self.down = False
 
         self.image = self.animations[self.current_direction][self.current_frame]
         self.rect = self.image.get_rect(topleft=(int(self.x), int(self.y)))
@@ -46,16 +47,17 @@ class BaseBird(pygame.sprite.Sprite, ABC):
 
         # Вертикальний рух — "Up"
         if 67.5 <= abs_angle <= 112.5:
-            return "Up", angle < 0  # від'ємний кут = вниз, але спрайт той самий
+            return "Up", angle < 0, False  # від'ємний кут = вниз, але спрайт той самий
 
         # Діагональний рух — "Diagonal"
-        if 22.5 < abs_angle < 67.5 or 112.5 < abs_angle < 157.5:
+        if 20.5 < abs_angle < 69.5 or 110.5 < abs_angle < 159.5:
             flipped = angle > 90 or angle < -90  # летить ліворуч
-            return "Diagonal", flipped
+            down =  angle < -20.5  # від'ємний кут = вниз
+            return "Diagonal", flipped, down
 
         # Горизонтальний рух — "Side"
         flipped = abs_angle > 90  # летить ліворуч
-        return "Side", flipped
+        return "Side", flipped, False
 
     def animate(self):
         if not self.isAlive:
@@ -69,7 +71,7 @@ class BaseBird(pygame.sprite.Sprite, ABC):
             return
 
         angle = self.trajectory.get_rotation_angle()
-        new_direction, self.flipped = self._get_direction_from_angle(angle)
+        new_direction, self.flipped, self.down = self._get_direction_from_angle(angle)
         self.current_direction = new_direction
 
         frames = self.animations.get(self.current_direction, [])
@@ -81,6 +83,9 @@ class BaseBird(pygame.sprite.Sprite, ABC):
 
         if self.flipped:
             frame_image = pygame.transform.flip(frame_image, True, False)
+
+        if self.down:
+            frame_image = pygame.transform.rotate(frame_image, 90 if self.flipped else -90)
 
         self.image = frame_image
         self.rect = self.image.get_rect(center=(int(self.x), int(self.y)))

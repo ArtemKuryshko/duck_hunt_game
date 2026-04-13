@@ -11,7 +11,7 @@ class LevelManager:
         self.on_bird_escape = on_bird_escape
         self.birds: List[BaseBird] = []
         self.spawn_timer = 0
-        self.spawn_interval = 5000 # 2 seconds
+        self.spawn_interval = 2000 # 2 seconds
 
     def spawn_bird(self):
         x = random.choice([-50, SCREEN_WIDTH + 50])
@@ -39,7 +39,6 @@ class LevelManager:
             if (bird.x < -OFFSCREEN_MARGIN or bird.x > SCREEN_WIDTH + OFFSCREEN_MARGIN or bird.y < -OFFSCREEN_MARGIN or bird.y > SCREEN_HEIGHT + OFFSCREEN_MARGIN):
                 self.on_bird_escape()
                 self.birds.remove(bird)
-                print(f"Removed bird at ({bird.x}, {bird.y})")
 
 
     def draw(self, screen: pygame.Surface):
