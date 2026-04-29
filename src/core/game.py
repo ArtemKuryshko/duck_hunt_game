@@ -13,7 +13,7 @@ from config import (
     BG_PATH,
 )
 from ui import Menu, Shop, UISystem
-from systems import ScoreSystem, LevelManager
+from systems import ScoreSystem, LevelManager, PointManager
 from factories.weaponFactory import WeaponFactory
 
 
@@ -39,6 +39,7 @@ class Game:
             self.score_system, on_bird_escape=self.score_system.deduct_health
         )
         self.ui_system = UISystem(self.font)
+        self.point_manager = PointManager()
 
         self.menu = Menu()
         self.shop = Shop()
@@ -47,6 +48,7 @@ class Game:
 
     def game_over(self):
         self.state = GameState.MAIN_MENU
+        self.point_manager.update_points(self.score_system.score)
         self.score_system.reset()
         self.level_manager.birds.clear()
 
