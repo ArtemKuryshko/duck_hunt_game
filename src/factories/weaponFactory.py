@@ -8,8 +8,8 @@ class WeaponFactory:
             "pistol": Pistol,
             "revolver": Revolver,
             "shotgun": Shotgun,
-            "rifle": LightRifle,
-            "automatic_rifle": AutomaticRifle
+            "light rifle": LightRifle,
+            "automatic rifle": AutomaticRifle
         }
         
         weapon_class = weapons.get(weapon_type.lower())
