@@ -121,6 +121,8 @@ class Game:
         elif self.state == GameState.MAIN_MENU:
             pygame.mouse.set_visible(True)
             self.menu.draw(self.screen)
+            points_surf = self.font.render(f"Points: {self.point_manager.points}", True, (255, 215, 0))
+            self.screen.blit(points_surf, (10, 10))
         elif self.state == GameState.SHOP:
             pygame.mouse.set_visible(True)
             self.shop.draw(self.screen)
