@@ -76,6 +76,7 @@ class Game:
                 if new_state == GameState.GAME and self.state != GameState.GAME:
                     self.score_system.reset()
                     self.level_manager.birds.clear()
+                    self.current_weapon = WeaponFactory.create_weapon(self.current_weapon_name)
                 self.state = new_state
 
             elif self.state == GameState.SHOP:
