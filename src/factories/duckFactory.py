@@ -13,7 +13,7 @@ class DuckFactory:
                 "Side": [],
                 "Up": [],
                 "Diagonal": [],
-                "Death": []
+                "Dead": []
             }
             
             duck_type_animations = sorted(listdir(path.join(ANIMATIONS_PATH, duck_type)))

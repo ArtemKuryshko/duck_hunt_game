@@ -27,15 +27,23 @@ class LevelManager:
             self.spawn_timer = 0
 
         for bird in self.birds[:]:
-            bird.update()
+            bird.update(dt)
 
             if not bird.isAlive:
-                if bird.damage > 0:
-                    self.score_system.deduct_health(damage = bird.damage)
-                    if bird in self.birds:
-                        self.birds.remove(bird)
+                if bird.was_shot:
+                    if not bird.points_handled:
+                        if bird.damage == 0:
+                            self.score_system.add_score(bird.kill_points)
+                        bird.points_handled = True
+                    
+                    if bird.y >= SCREEN_HEIGHT - 200:
+                        if bird in self.birds:
+                            self.birds.remove(bird)
                 else:
-                    self.score_system.add_score(bird.kill_points)
+                    if not bird.points_handled:
+                        if bird.damage > 0:
+                            self.score_system.deduct_health(damage = bird.damage)
+                        bird.points_handled = True
                     if bird in self.birds:
                         self.birds.remove(bird)
                 continue
@@ -45,8 +53,8 @@ class LevelManager:
             if (bird.x < -OFFSCREEN_MARGIN or bird.x > SCREEN_WIDTH + OFFSCREEN_MARGIN or bird.y < -OFFSCREEN_MARGIN or bird.y > SCREEN_HEIGHT + OFFSCREEN_MARGIN):
                 if bird.damage == 0:
                     self.on_bird_escape()
-                    if bird in self.birds:
-                        self.birds.remove(bird)
+                if bird in self.birds:
+                    self.birds.remove(bird)
 
 
     def draw(self, screen: pygame.Surface):

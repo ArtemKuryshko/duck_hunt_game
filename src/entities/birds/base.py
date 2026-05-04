@@ -19,6 +19,8 @@ class BaseBird(pygame.sprite.Sprite, ABC):
         self.damage = 0
         self.kill_points = 0
         self.isAlive = True
+        self.was_shot = False
+        self.points_handled = False
         self.flipped = False  # чи летить ліворуч
         self.down = False
 
@@ -35,8 +37,10 @@ class BaseBird(pygame.sprite.Sprite, ABC):
 
     def get_damage(self, damage: int):
         self.health -= damage
-        if self.health <= 0:
+        if self.health <= 0 and self.isAlive:
             self.isAlive = False
+            self.was_shot = True
+            self.current_frame = 0
 
     def move(self):
         self.trajectory.update()
@@ -62,10 +66,10 @@ class BaseBird(pygame.sprite.Sprite, ABC):
         return "Side", flipped, False
 
     def animate(self):
-        if not self.isAlive:
-            frames = self.animations.get("Death", [])
+        if not self.isAlive and self.was_shot:
+            frames = self.animations.get("Dead", [])
             if frames:
-                # Death програємо один раз до кінця
+                # Dead програємо один раз до кінця
                 frame_idx = min(self.current_frame // 10, len(frames) - 1)
                 self.image = frames[frame_idx]
                 self.current_frame += 1
@@ -92,11 +96,17 @@ class BaseBird(pygame.sprite.Sprite, ABC):
         self.image = frame_image
         self.rect = self.image.get_rect(center=(int(self.x), int(self.y)))
 
-    def update(self):
-        if self.health <= 0:
+    def update(self, dt: int):
+        if self.health <= 0 and self.isAlive:
             self.isAlive = False
+            self.was_shot = True
+            self.current_frame = 0
+
         if self.isAlive:
             self.animate()
             self.move()
-        else:
-            self.animate()  
+        elif self.was_shot:
+            self.animate()
+            # Падіння вниз при влучанні
+            self.y += 0.4 * dt
+            self.rect.center = (int(self.x), int(self.y))
