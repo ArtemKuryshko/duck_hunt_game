@@ -13,7 +13,8 @@ from config import (
     BG_PATH,
 )
 from ui import Menu, Shop, UISystem
-from systems import ScoreSystem, LevelManager
+from systems import ScoreSystem, LevelManager, PointManager
+from factories.weaponFactory import WeaponFactory
 
 
 class Game:
@@ -38,12 +39,16 @@ class Game:
             self.score_system, on_bird_escape=self.score_system.deduct_health
         )
         self.ui_system = UISystem(self.font)
+        self.point_manager = PointManager()
 
         self.menu = Menu()
         self.shop = Shop()
 
+        self.current_weapon = WeaponFactory.create_weapon("Pistol")
+
     def game_over(self):
         self.state = GameState.MAIN_MENU
+        self.point_manager.update_points(self.score_system.score)
         self.score_system.reset()
         self.level_manager.birds.clear()
 
@@ -55,11 +60,13 @@ class Game:
             if self.state == GameState.GAME:
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     pos = pygame.mouse.get_pos()
-                    for bird in self.level_manager.birds:
-                        if bird.rect.collidepoint(pos):
-                            bird.get_damage(1)
-                elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
-                    self.state = GameState.MAIN_MENU
+                    if self.current_weapon.can_shoot():
+                        self.current_weapon.shoot(pos, self.level_manager.birds)
+                    elif self.current_weapon.current_ammo == 0:
+                        self.current_weapon.start_reload()
+                elif event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_r:
+                        self.current_weapon.start_reload()
 
             elif self.state == GameState.MAIN_MENU:
                 new_state = self.menu.handle_events(event)
@@ -79,6 +86,7 @@ class Game:
             self.shop.update()
         elif self.state == GameState.GAME:
             self.level_manager.update(dt)
+            self.current_weapon.update(dt)
 
     def draw_game_world(self):
         self.screen.blit(self.background, (0, 0))
@@ -87,7 +95,6 @@ class Game:
         if self.state == GameState.GAME:
             self.level_manager.draw(self.screen)
 
-        self.screen.blit(self.grass, (0, 0))
         self.screen.blit(self.grass, (0, -20))
         self.screen.blit(self.scoreboard, (100, 490))
 
@@ -97,7 +104,7 @@ class Game:
         if self.state == GameState.GAME:
             pygame.mouse.set_visible(False)
             self.ui_system.draw_game_ui(
-                self.screen, self.score_system.score, self.score_system.health
+                self.screen, self.score_system.score, self.score_system.health, self.current_weapon
             )
             self.ui_system.draw_crosshair(self.screen)
         elif self.state == GameState.MAIN_MENU:
