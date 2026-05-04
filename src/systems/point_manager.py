@@ -1,12 +1,11 @@
 import json, os
 from config import BASE_DIR
+
 class PointManager:
     def __init__(self):
         self.points = 0
         self.best_score = 0
         self.create_file()
-
-    
 
     def create_file(self):
         try:
@@ -27,9 +26,13 @@ class PointManager:
         self.update_file()
         print(f"best: {self.best_score} points: {self.points}")
 
+    def spend_points(self, amount: int) -> bool:
+        if self.points >= amount:
+            self.points -= amount
+            self.update_file()
+            return True
+        return False
+
     def update_file(self):
         with open(os.path.join(BASE_DIR, "points.json"), "w") as file:
             json.dump({"points": self.points, "best_score": self.best_score}, file)
-    
-
-    

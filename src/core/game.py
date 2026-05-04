@@ -13,7 +13,7 @@ from config import (
     BG_PATH,
 )
 from ui import Menu, Shop, UISystem
-from systems import ScoreSystem, LevelManager, PointManager
+from systems import ScoreSystem, LevelManager, PointManager, InventoryManager
 from factories.weaponFactory import WeaponFactory
 
 
@@ -39,12 +39,15 @@ class Game:
             self.score_system, on_bird_escape=self.score_system.deduct_health
         )
         self.ui_system = UISystem(self.font)
+        
         self.point_manager = PointManager()
+        self.inventory_manager = InventoryManager()
 
         self.menu = Menu()
-        self.shop = Shop()
+        self.shop = Shop(self.point_manager, self.inventory_manager)
 
-        self.current_weapon = WeaponFactory.create_weapon("Pistol")
+        self.current_weapon_name = self.inventory_manager.current_weapon
+        self.current_weapon = WeaponFactory.create_weapon(self.current_weapon_name)
 
     def game_over(self):
         self.state = GameState.MAIN_MENU
@@ -76,7 +79,14 @@ class Game:
                 self.state = new_state
 
             elif self.state == GameState.SHOP:
-                self.state = self.shop.handle_events(event)
+                new_state = self.shop.handle_events(event)
+                
+                if new_state != GameState.SHOP:
+                    if self.current_weapon_name != self.inventory_manager.current_weapon:
+                        self.current_weapon_name = self.inventory_manager.current_weapon
+                        self.current_weapon = WeaponFactory.create_weapon(self.current_weapon_name)
+                        
+                self.state = new_state
 
     def update(self):
         dt = self.clock.get_time()
