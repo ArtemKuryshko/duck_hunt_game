@@ -1,7 +1,8 @@
 import pygame
+from entities.effects.default_explosion import DefaultExplosion
 
 class BaseWeapon:
-    def __init__(self, name, ammo_capacity, reload_time, fire_rate):
+    def __init__(self, name, ammo_capacity, reload_time, fire_rate, shot_animation=DefaultExplosion):
         self.name = name
         self.ammo_capacity = ammo_capacity
         self.current_ammo = ammo_capacity
@@ -10,6 +11,7 @@ class BaseWeapon:
         self.reload_timer = 0
         self.is_reloading = False
         self.last_shot_time = 0
+        self.shot_animation = shot_animation
 
     def can_shoot(self):
         now = pygame.time.get_ticks()
@@ -31,5 +33,5 @@ class BaseWeapon:
         if self.can_shoot():
             self.current_ammo -= 1
             self.last_shot_time = pygame.time.get_ticks()
-            return True
-        return False
+            return self.shot_animation(mouse_pos[0], mouse_pos[1])
+        return None

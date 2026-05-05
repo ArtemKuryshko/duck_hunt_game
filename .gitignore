@@ -5,3 +5,5 @@ GEMINI.md
 .geminiignore
 package-lock.json
 package.json
+src/inventory.json
+src/points.json

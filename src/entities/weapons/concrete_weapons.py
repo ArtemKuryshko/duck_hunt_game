@@ -2,67 +2,72 @@
 from .base import BaseWeapon
 import pygame
 import random
+from entities.effects.shotgun_explosion import ShotgunExplosion
 
 class Pistol(BaseWeapon):
     def __init__(self):
         super().__init__("Pistol", 8, 1.0, 0.5)
 
     def shoot(self, mouse_pos: tuple, birds: list):
-        if super().shoot(mouse_pos, birds):
+        effect = super().shoot(mouse_pos, birds)
+        if effect:
             for bird in birds:
                 if bird.rect.collidepoint(mouse_pos):
                     bird.health -= 1
                     break
-            return True
-        return False
+            return effect
+        return None
 
 class Revolver(BaseWeapon):
     def __init__(self):
         super().__init__("Revolver", 6, 1.5, 0.8)
 
     def shoot(self, mouse_pos: tuple, birds: list):
-        if super().shoot(mouse_pos, birds):
+        effect = super().shoot(mouse_pos, birds)
+        if effect:
             for bird in birds:
                 if bird.rect.collidepoint(mouse_pos):
                     bird.health -= 2
                     break
-            return True
-        return False
+            return effect
+        return None
 
 class LightRifle(BaseWeapon):
     def __init__(self):
         super().__init__("Light Rifle", 12, 1.0, 0.2)
 
     def shoot(self, mouse_pos: tuple, birds: list):
-        if super().shoot(mouse_pos, birds):
+        effect = super().shoot(mouse_pos, birds)
+        if effect:
             for bird in birds:
                 if bird.rect.collidepoint(mouse_pos):
                     bird.health -= 1
                     break
-            return True
-        return False
+            return effect
+        return None
 
 
 
 class Shotgun(BaseWeapon):
     def __init__(self):
-        super().__init__("Shotgun", 5, 2.0, 0.8)
-        self.spread_radius = 60
-        self.pellets_count = 10 
+        super().__init__("Shotgun", 5, 2.0, 0.8, shot_animation=ShotgunExplosion)
+        self.spread_radius = 30
+        self.pellets_count = 5 
 
     def shoot(self, mouse_pos: tuple, birds: list):
-        if not super().shoot(mouse_pos, birds):
-            return False
+        if not self.can_shoot():
+            return None
+
+        self.current_ammo -= 1
+        self.last_shot_time = pygame.time.get_ticks()
 
         pellet_hits = []
         for _ in range(self.pellets_count):
             offset_x = random.uniform(-self.spread_radius, self.spread_radius)
             offset_y = random.uniform(-self.spread_radius, self.spread_radius)
-            
             hit_point = (mouse_pos[0] + offset_x, mouse_pos[1] + offset_y)
             pellet_hits.append(hit_point)
 
-        hit_any_bird = False
         for bird in birds:
             if not bird.isAlive: continue
             
@@ -73,19 +78,19 @@ class Shotgun(BaseWeapon):
             
             if hits_on_this_bird > 0:
                 bird.isAlive = False
-                hit_any_bird = True
                 
-        return hit_any_bird
+        return self.shot_animation(pellet_hits)
 
 class AutomaticRifle(BaseWeapon):
     def __init__(self):
         super().__init__("Rifle", 16, 1.5, 0.2)
 
     def shoot(self, mouse_pos: tuple, birds: list):
-        if super().shoot(mouse_pos, birds):
+        effect = super().shoot(mouse_pos, birds)
+        if effect:
             for bird in birds:
                 if bird.rect.collidepoint(mouse_pos):
                     bird.isAlive = False
                     break
-            return True
-        return False
+            return effect
+        return None
