@@ -48,12 +48,15 @@ class Game:
 
         self.current_weapon_name = self.inventory_manager.current_weapon
         self.current_weapon = WeaponFactory.create_weapon(self.current_weapon_name)
+        
+        self.effects = pygame.sprite.Group()
 
     def game_over(self):
         self.state = GameState.MAIN_MENU
         self.point_manager.update_points(self.score_system.score)
         self.score_system.reset()
         self.level_manager.birds.clear()
+        self.effects.empty()
 
     def process_events(self):
         for event in pygame.event.get():
@@ -63,8 +66,12 @@ class Game:
             if self.state == GameState.GAME:
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     pos = pygame.mouse.get_pos()
-                    if self.current_weapon.can_shoot():
-                        self.current_weapon.shoot(pos, self.level_manager.birds)
+                    effect = self.current_weapon.shoot(pos, self.level_manager.birds)
+                    if effect:
+                        if isinstance(effect, pygame.sprite.Group):
+                            self.effects.add(*effect.sprites())
+                        else:
+                            self.effects.add(effect)
                     elif self.current_weapon.current_ammo == 0:
                         self.current_weapon.start_reload()
                 elif event.type == pygame.KEYDOWN:
@@ -76,6 +83,7 @@ class Game:
                 if new_state == GameState.GAME and self.state != GameState.GAME:
                     self.score_system.reset()
                     self.level_manager.birds.clear()
+                    self.effects.empty()
                     self.current_weapon = WeaponFactory.create_weapon(self.current_weapon_name)
                 self.state = new_state
 
@@ -96,8 +104,11 @@ class Game:
         elif self.state == GameState.SHOP:
             self.shop.update()
         elif self.state == GameState.GAME:
-            self.level_manager.update(dt)
+            new_effects = self.level_manager.update(dt)
+            if new_effects:
+                self.effects.add(*new_effects)
             self.current_weapon.update(dt)
+            self.effects.update(dt)
 
     def draw_game_world(self):
         self.screen.blit(self.background, (0, 0))
@@ -105,6 +116,7 @@ class Game:
 
         if self.state == GameState.GAME:
             self.level_manager.draw(self.screen)
+            self.effects.draw(self.screen)
 
         self.screen.blit(self.grass, (0, -20))
         self.screen.blit(self.scoreboard, (100, 490))
