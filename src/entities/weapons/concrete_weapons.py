@@ -77,7 +77,7 @@ class Shotgun(BaseWeapon):
                     hits_on_this_bird += 1
             
             if hits_on_this_bird > 0:
-                bird.isAlive = False
+                bird.health -= hits_on_this_bird
                 
         return self.shot_animation(pellet_hits)
 
@@ -90,7 +90,7 @@ class AutomaticRifle(BaseWeapon):
         if effect:
             for bird in birds:
                 if bird.rect.collidepoint(mouse_pos):
-                    bird.isAlive = False
+                    bird.health = 0
                     break
             return effect
         return None
