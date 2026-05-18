@@ -4,14 +4,17 @@ from config import SCREEN_WIDTH, SCREEN_HEIGHT
 from factories.duckFactory import DuckFactory
 from entities.birds.base import BaseBird
 from typing import List, Callable
+from systems.settings_manager import SettingsManager
 
 class LevelManager:
-    def __init__(self, score_system, on_bird_escape: Callable):
+    def __init__(self, score_system, on_bird_escape: Callable, SettingsManager: SettingsManager = SettingsManager()):
         self.score_system = score_system
         self.on_bird_escape = on_bird_escape
         self.birds: List[BaseBird] = []
         self.spawn_timer = 0
-        self.spawn_interval = 2000 # 2 seconds
+        self.difficulty = SettingsManager.difficulty
+        self.spawn_rate = {"easy": 2000, "medium": 1500, "hard": 1000}
+        self.spawn_interval = self.spawn_rate[self.difficulty]
 
     def spawn_bird(self):
         x = random.choice([-50, SCREEN_WIDTH + 50])
