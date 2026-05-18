@@ -1,5 +1,5 @@
 
-from entities.weapons.concrete_weapons import Pistol, Revolver, Shotgun, LightRifle, AutomaticRifle
+from entities.weapons import Pistol, Revolver, Shotgun, LightRifle, AutomaticRifle
 
 class WeaponFactory:
     @staticmethod
