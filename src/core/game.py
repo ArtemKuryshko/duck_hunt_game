@@ -104,7 +104,9 @@ class Game:
         elif self.state == GameState.SHOP:
             self.shop.update()
         elif self.state == GameState.GAME:
-            self.level_manager.update(dt)
+            new_effects = self.level_manager.update(dt)
+            if new_effects:
+                self.effects.add(*new_effects)
             self.current_weapon.update(dt)
             self.effects.update(dt)
 
