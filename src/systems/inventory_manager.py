@@ -1,12 +1,14 @@
-import json, os
+import json
+import os
+
 from config import BASE_DIR
 
 
 class InventoryManager:
-    def __init__(self):
+    def __init__(self, file_path: str | None = None):
         self.unlocked_weapons = ["Pistol"]
         self.current_weapon = "Pistol"
-        self.file_path = os.path.join(BASE_DIR, "inventory.json")
+        self.file_path = file_path or os.path.join(BASE_DIR, "inventory.json")
         self.create_file()
 
     def create_file(self):
@@ -16,7 +18,7 @@ class InventoryManager:
             self.load_from_file()
 
     def load_from_file(self):
-        with open(self.file_path, "r") as file:
+        with open(self.file_path, "r", encoding="utf-8") as file:
             data = json.load(file)
             self.unlocked_weapons = data.get("unlocked_weapons", ["Pistol"])
             self.current_weapon = data.get("current_weapon", "Pistol")
@@ -32,7 +34,7 @@ class InventoryManager:
             self.update_file()
 
     def update_file(self):
-        with open(self.file_path, "w") as file:
+        with open(self.file_path, "w", encoding="utf-8") as file:
             json.dump({
                 "unlocked_weapons": self.unlocked_weapons,
                 "current_weapon": self.current_weapon

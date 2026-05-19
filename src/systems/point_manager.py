@@ -1,21 +1,25 @@
-import json, os
+import json
+import os
+
 from config import BASE_DIR
 
+
 class PointManager:
-    def __init__(self):
+    def __init__(self, file_path: str | None = None):
         self.points = 0
         self.best_score = 0
+        self.file_path = file_path or os.path.join(BASE_DIR, "points.json")
         self.create_file()
 
     def create_file(self):
         try:
-            with open(os.path.join(BASE_DIR, "points.json"), "x") as file:
+            with open(self.file_path, "x", encoding="utf-8") as file:
                 json.dump({"points": 0, "best_score": 0}, file)
-        except FileExistsError: 
+        except FileExistsError:
             self.load_from_file()
 
     def load_from_file(self):
-        with open(os.path.join(BASE_DIR, "points.json"), "r") as file:
+        with open(self.file_path, "r", encoding="utf-8") as file:
             data = json.load(file)
             self.points = data["points"]
             self.best_score = data["best_score"]
@@ -34,5 +38,5 @@ class PointManager:
         return False
 
     def update_file(self):
-        with open(os.path.join(BASE_DIR, "points.json"), "w") as file:
+        with open(self.file_path, "w", encoding="utf-8") as file:
             json.dump({"points": self.points, "best_score": self.best_score}, file)

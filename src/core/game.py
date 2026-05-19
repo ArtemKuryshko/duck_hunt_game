@@ -13,7 +13,7 @@ from config import (
     BG_PATH,
 )
 from ui import Menu, Shop, UISystem
-from systems import ScoreSystem, LevelManager, PointManager, InventoryManager
+from systems import ScoreSystem, LevelManager, PointManager, InventoryManager, SettingsManager
 from factories.weaponFactory import WeaponFactory
 
 
@@ -35,8 +35,11 @@ class Game:
 
         self.font = pygame.font.Font(FONT_PATH, 30)
         self.score_system = ScoreSystem(on_game_over=self.game_over)
+        self.settings_manager = SettingsManager(argv=sys.argv[1:])
         self.level_manager = LevelManager(
-            self.score_system, on_bird_escape=self.score_system.deduct_health
+            self.score_system,
+            on_bird_escape=self.score_system.deduct_health,
+            settings_manager=self.settings_manager,
         )
         self.ui_system = UISystem(self.font)
         
