@@ -19,6 +19,8 @@ jobs:
   quality:
     if: github.event_name != 'create' || github.event.ref_type == 'branch'
     runs-on: ubuntu-latest
+    env:
+      LINT_TARGETS: src/config.py src/systems/score_system.py src/systems/trajectory_creator.py src/systems/settings_manager.py src/systems/point_manager.py src/systems/inventory_manager.py src/systems/level_manager.py tests
 
     steps:
       - name: Check out repository
@@ -37,17 +39,85 @@ jobs:
       - name: Install dependencies
         run: python -m pip install -r requirements.txt
 
-      - name: Run flake8
-        run: >
-          python -m flake8
-          src/config.py
-          src/systems/score_system.py
-          src/systems/trajectory_creator.py
-          src/systems/settings_manager.py
-          src/systems/point_manager.py
-          src/systems/inventory_manager.py
-          src/systems/level_manager.py
-          tests
+      - name: Prepare report directories
+        run: |
+          mkdir -p artifacts/pytest
+          mkdir -p artifacts/flake8
 
       - name: Run pytest
-        run: python -m pytest
+        id: pytest_run
+        continue-on-error: true
+        run: python -m pytest --html=artifacts/pytest/report.html --self-contained-html
+
+      - name: Ensure pytest report exists
+        if: always()
+        run: |
+          if [ ! -f artifacts/pytest/report.html ]; then
+            printf '%s\n' \
+              '<!doctype html><html lang="en"><meta charset="utf-8"><title>Pytest report unavailable</title><body><h1>Pytest report unavailable</h1><p>pytest did not produce an HTML report. See workflow logs for details.</p></body></html>' \
+              > artifacts/pytest/report.html
+          fi
+
+      - name: Run flake8
+        id: flake8_run
+        continue-on-error: true
+        run: |
+          python -m flake8 --jobs=1 $LINT_TARGETS --format=html --htmldir=artifacts/flake8
+
+      - name: Ensure flake8 report exists
+        if: always()
+        run: |
+          if [ ! -f artifacts/flake8/index.html ]; then
+            printf '%s\n' \
+              '<!doctype html><html lang="en"><meta charset="utf-8"><title>Flake8 report unavailable</title><body><h1>Flake8 report unavailable</h1><p>flake8 did not produce an HTML report. See workflow logs for details.</p></body></html>' \
+              > artifacts/flake8/index.html
+          fi
+
+      - name: Upload pytest report
+        if: always()
+        id: upload_pytest
+        uses: actions/upload-artifact@v4
+        with:
+          name: pytest-report-${{ github.sha }}
+          path: artifacts/pytest
+          retention-days: 14
+          if-no-files-found: error
+
+      - name: Upload flake8 report
+        if: always()
+        id: upload_flake8
+        uses: actions/upload-artifact@v4
+        with:
+          name: flake8-report-${{ github.sha }}
+          path: artifacts/flake8
+          retention-days: 14
+          if-no-files-found: error
+
+      - name: Write workflow summary
+        if: always()
+        run: |
+          pytest_url='${{ steps.upload_pytest.outputs.artifact-url }}'
+          flake8_url='${{ steps.upload_flake8.outputs.artifact-url }}'
+          run_url="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+          if [ -z "$pytest_url" ]; then
+            pytest_url="$run_url"
+          fi
+          if [ -z "$flake8_url" ]; then
+            flake8_url="$run_url"
+          fi
+          {
+            echo '## Quality reports'
+            echo
+            echo "- Commit: \`${GITHUB_SHA}\`"
+            echo "- Pytest: \`${{ steps.pytest_run.outcome }}\`"
+            echo "- Flake8: \`${{ steps.flake8_run.outcome }}\`"
+            echo "- Pytest artifact: [download](${pytest_url})"
+            echo "- Flake8 artifact: [download](${flake8_url})"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Enforce quality result
+        if: always()
+        run: |
+          if [ "${{ steps.pytest_run.outcome }}" != "success" ] || [ "${{ steps.flake8_run.outcome }}" != "success" ]; then
+            exit 1
+          fi
