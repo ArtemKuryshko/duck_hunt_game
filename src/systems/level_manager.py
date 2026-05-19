@@ -53,21 +53,21 @@ class LevelManager:
                         if bird.damage == 0:
                             self.score_system.add_score(bird.kill_points)
                         else:
-                            self.score_system.deduct_health(damage = bird.damage)
+                            self.score_system.deduct_health(damage=bird.damage)
                         bird.points_handled = True
-                    
+
                     if bird.damage > 0:
                         if bird in self.birds:
                             self.birds.remove(bird)
                         continue
-                            
+
                     if bird.y >= SCREEN_HEIGHT - 200:
                         if bird in self.birds:
                             self.birds.remove(bird)
                 else:
                     if not bird.points_handled:
                         if bird.damage > 0:
-                            self.score_system.deduct_health(damage = bird.damage)
+                            self.score_system.deduct_health(damage=bird.damage)
                         bird.points_handled = True
                     if bird in self.birds:
                         self.birds.remove(bird)
@@ -80,9 +80,8 @@ class LevelManager:
                     self.on_bird_escape()
                 if bird in self.birds:
                     self.birds.remove(bird)
-        
-        return new_effects
 
+        return new_effects
 
     def draw(self, screen: pygame.Surface):
         for bird in self.birds:

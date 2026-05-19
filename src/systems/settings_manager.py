@@ -34,7 +34,7 @@ class SettingsManager:
         parser.add_argument(
             "-d", "--difficulty",
             choices=["easy", "medium", "hard"],
-            help="Тимчасово змінити складність гри на один запуск"
+            help="Тимчасово змінити складність гри на один запуск",
         )
 
         args = parser.parse_args(argv)
