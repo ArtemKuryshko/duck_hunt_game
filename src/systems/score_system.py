@@ -15,7 +15,6 @@ class ScoreSystem:
         if self.health <= 0:
             if self.on_game_over:
                 self.on_game_over()
-        
 
     def reset(self):
         self.score = 0
