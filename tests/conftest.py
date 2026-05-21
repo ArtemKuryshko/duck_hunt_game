@@ -1,3 +1,5 @@
+import pygame
+from unittest.mock import MagicMock
 from pathlib import Path
 import sys
 from dataclasses import dataclass
@@ -16,6 +18,7 @@ from systems.level_manager import LevelManager
 from systems.point_manager import PointManager
 from systems.score_system import ScoreSystem
 from systems.settings_manager import SettingsManager
+from systems.trajectory_creator import BirdTrajectory
 
 
 @dataclass
@@ -86,3 +89,28 @@ def level_manager(score_system):
         difficulty="easy",
     )
     return manager
+
+
+@pytest.fixture
+def mock_animations():
+    mock_surf = MagicMock(spec=pygame.Surface)
+    mock_surf.get_rect.return_value = pygame.Rect(0, 0, 150, 150)
+    return {
+        "Side": [mock_surf],
+        "Up": [mock_surf],
+        "Diagonal": [mock_surf],
+        "Dead": [mock_surf]
+    }
+
+
+@pytest.fixture
+def mock_trajectory_class(monkeypatch):
+    """Consolidated fixture to mock BirdTrajectory during bird initialization."""
+    mock_traj = MagicMock(spec=BirdTrajectory)
+    mock_traj.get_position.return_value = (100.0, 100.0)
+    mock_traj.get_rotation_angle.return_value = 0.0
+    mock_traj.is_finished = False
+
+    mock_class = MagicMock(return_value=mock_traj)
+    monkeypatch.setattr("entities.birds.base.BirdTrajectory", mock_class)
+    return mock_traj
