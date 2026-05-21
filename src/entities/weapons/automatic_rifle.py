@@ -1,5 +1,6 @@
 from .base import BaseWeapon
 
+
 class AutomaticRifle(BaseWeapon):
     def __init__(self):
         super().__init__("Rifle", 16, 1.5, 0.2)

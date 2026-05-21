@@ -1,5 +1,5 @@
-
 from entities.weapons import Pistol, Revolver, Shotgun, LightRifle, AutomaticRifle
+
 
 class WeaponFactory:
     @staticmethod
@@ -9,9 +9,9 @@ class WeaponFactory:
             "revolver": Revolver,
             "shotgun": Shotgun,
             "light rifle": LightRifle,
-            "automatic rifle": AutomaticRifle
+            "automatic rifle": AutomaticRifle,
         }
-        
+
         weapon_class = weapons.get(weapon_type.lower())
         if weapon_class:
             return weapon_class()

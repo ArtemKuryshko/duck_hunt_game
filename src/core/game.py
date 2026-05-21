@@ -42,7 +42,7 @@ class Game:
             settings_manager=self.settings_manager,
         )
         self.ui_system = UISystem(self.font)
-        
+
         self.point_manager = PointManager()
         self.inventory_manager = InventoryManager()
 
@@ -51,7 +51,7 @@ class Game:
 
         self.current_weapon_name = self.inventory_manager.current_weapon
         self.current_weapon = WeaponFactory.create_weapon(self.current_weapon_name)
-        
+
         self.effects = pygame.sprite.Group()
 
     def game_over(self):
@@ -92,12 +92,12 @@ class Game:
 
             elif self.state == GameState.SHOP:
                 new_state = self.shop.handle_events(event)
-                
+
                 if new_state != GameState.SHOP:
                     if self.current_weapon_name != self.inventory_manager.current_weapon:
                         self.current_weapon_name = self.inventory_manager.current_weapon
                         self.current_weapon = WeaponFactory.create_weapon(self.current_weapon_name)
-                        
+
                 self.state = new_state
 
     def update(self):

@@ -1,6 +1,7 @@
 import pygame
 from entities.effects.default_explosion import DefaultExplosion
 
+
 class BaseWeapon:
     def __init__(self, name, ammo_capacity, reload_time, fire_rate, shot_animation=DefaultExplosion):
         self.name = name

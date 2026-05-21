@@ -1,5 +1,6 @@
 import pygame
 
+
 class Button:
     def __init__(self, text: str, x: int, y: int, width: int, height: int, font: pygame.font.Font, color: tuple, hover_color: tuple):
         self.text = text
@@ -8,18 +9,18 @@ class Button:
         self.color = color
         self.hover_color = hover_color
         self.is_hovered = False
-        
+
         self.border_color = (0, 0, 0)
         self.text_color = (255, 255, 255)
 
     def draw(self, screen: pygame.Surface):
         current_color = self.hover_color if self.is_hovered else self.color
-        
+
         # Retro shadow
         shadow_rect = self.rect.copy()
         shadow_rect.move_ip(5, 5)
         pygame.draw.rect(screen, (0, 0, 0), shadow_rect)
-        
+
         # Main button
         pygame.draw.rect(screen, current_color, self.rect)
         pygame.draw.rect(screen, self.border_color, self.rect, 4)

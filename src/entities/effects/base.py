@@ -1,6 +1,7 @@
 import pygame
 from abc import ABC, abstractmethod
 
+
 class BaseEffect(pygame.sprite.Sprite, ABC):
     def __init__(self, x, y, duration):
         super().__init__()
