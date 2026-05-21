@@ -1,22 +1,38 @@
+from unittest.mock import Mock
+
+import pytest
 from systems.score_system import ScoreSystem
 
 
-def test_add_score_increases_total():
+pytestmark = [pytest.mark.systems, pytest.mark.unit]
+
+
+@pytest.mark.parametrize(("start_score", "amount", "expected"), [(0, 15, 15), (10, 5, 15)])
+def test_add_score_increases_total(start_score, amount, expected):
     score_system = ScoreSystem()
+    score_system.score = start_score
 
-    score_system.add_score(15)
+    score_system.add_score(amount)
 
-    assert score_system.score == 15
+    assert score_system.score == expected
 
 
 def test_deduct_health_triggers_game_over_callback_once_health_is_depleted():
-    calls = []
-    score_system = ScoreSystem(on_game_over=lambda: calls.append("game-over"))
+    on_game_over = Mock()
+    score_system = ScoreSystem(on_game_over=on_game_over)
 
     score_system.deduct_health(3)
 
     assert score_system.health == 0
-    assert calls == ["game-over"]
+    on_game_over.assert_called_once_with()
+
+
+def test_deduct_health_without_callback_only_changes_health():
+    score_system = ScoreSystem()
+
+    score_system.deduct_health(1)
+
+    assert score_system.health == 2
 
 
 def test_reset_restores_default_values():
