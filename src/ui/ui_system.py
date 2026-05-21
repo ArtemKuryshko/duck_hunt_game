@@ -7,7 +7,7 @@ from config import (
     GREY_HEART_PATH,
     CROSSHAIR_PATH,
     FONT_PATH,
-    WEAPONS_PATH
+    WEAPONS_PATH,
 )
 
 
@@ -31,7 +31,7 @@ class UISystem:
             "Revolver": "revolver.png",
             "Light Rifle": "light rifle.png",
             "Shotgun": "shotgun.png",
-            "Rifle": "autonatic rifle.png"
+            "Rifle": "autonatic rifle.png",
         }
 
         for w_name, file_name in weapon_files.items():
@@ -40,7 +40,7 @@ class UISystem:
                 ratio = 60 / img.get_width()
                 w_height = int(img.get_height() * ratio)
                 self.weapon_images[w_name] = pygame.transform.smoothscale(img, (60, w_height))
-            except:
+            except (pygame.error, FileNotFoundError):
                 self.weapon_images[w_name] = pygame.Surface((60, 40))
 
     def draw_health_ui(self, screen: pygame.Surface, health: int):

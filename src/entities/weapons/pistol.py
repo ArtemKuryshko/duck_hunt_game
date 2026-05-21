@@ -1,5 +1,6 @@
 from .base import BaseWeapon
 
+
 class Pistol(BaseWeapon):
     def __init__(self):
         super().__init__("Pistol", 8, 1.0, 0.5)

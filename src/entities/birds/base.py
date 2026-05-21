@@ -1,9 +1,9 @@
-from abc import ABC, abstractmethod
+from abc import ABC
 from typing import Dict, List
 import pygame
 from systems.trajectory_creator import BirdTrajectory
-from config import SCREEN_WIDTH, SCREEN_HEIGHT
 from entities.effects.default_explosion import DefaultExplosion
+
 
 class BaseBird(pygame.sprite.Sprite, ABC):
     def __init__(self, x: int, y: int, animations: Dict[str, List[pygame.Surface]], speed: float):
@@ -27,14 +27,13 @@ class BaseBird(pygame.sprite.Sprite, ABC):
 
         self.image = self.animations[self.current_direction][self.current_frame]
         self.rect = self.image.get_rect(topleft=(int(self.x), int(self.y)))
-        
+
         self.speed = speed
         self.trajectory = BirdTrajectory(
             speed=self.speed,
             spawn_point=(self.x, self.y),
         )
         self.x, self.y = self.trajectory.get_position()
-
 
     def get_damage(self, damage: int):
         self.health -= damage
@@ -49,7 +48,6 @@ class BaseBird(pygame.sprite.Sprite, ABC):
         self.rect.center = (int(self.x), int(self.y))
 
     def _get_direction_from_angle(self, angle: float) -> tuple[str, bool]:
-       
         abs_angle = abs(angle)
 
         # Вертикальний рух — "Up"
@@ -59,7 +57,7 @@ class BaseBird(pygame.sprite.Sprite, ABC):
         # Діагональний рух — "Diagonal"
         if 20.5 < abs_angle < 69.5 or 110.5 < abs_angle < 159.5:
             flipped = angle > 90 or angle < -90  # летить ліворуч
-            down =  angle < -20.5  # від'ємний кут = вниз
+            down = angle < -20.5  # від'ємний кут = вниз
             return "Diagonal", flipped, down
 
         # Горизонтальний рух — "Side"

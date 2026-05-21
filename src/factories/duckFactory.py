@@ -1,21 +1,23 @@
 from config import ANIMATIONS_PATH
 from os import path, listdir
 from typing import Dict, List
-from entities.birds import *
+from entities.birds import BadCrow, BaseBird, GreenDuck, WhiteDuck
 import pygame
+
+
 class DuckFactory:
-    _resources: Dict[str, Dict[str, List[pygame.Surface]]] = {} #кешування анімацій для пташок
+    _resources: Dict[str, Dict[str, List[pygame.Surface]]] = {}  # кешування анімацій для пташок
 
     @classmethod
     def load_duck_animations(cls, duck_type: str) -> Dict[str, List[pygame.Surface]]:
-        if duck_type not in cls._resources: #заванатження в кеш анімацій пташки
+        if duck_type not in cls._resources:  # заванатження в кеш анімацій пташки
             animations = {
                 "Side": [],
                 "Up": [],
                 "Diagonal": [],
-                "Dead": []
+                "Dead": [],
             }
-            
+
             duck_type_animations = sorted(listdir(path.join(ANIMATIONS_PATH, duck_type)))
 
             for image in duck_type_animations:
@@ -27,9 +29,9 @@ class DuckFactory:
             cls._resources[duck_type] = animations
 
         return cls._resources[duck_type]
-    
+
     @classmethod
-    def create_duck(cls,duck_type: str, x: int, y: int) -> BaseBird:
+    def create_duck(cls, duck_type: str, x: int, y: int) -> BaseBird:
         animations = cls.load_duck_animations(duck_type)
         match duck_type:
             case "WhiteDuck":
@@ -38,6 +40,4 @@ class DuckFactory:
                 return BadCrow(x, y, animations)
             case "GreenDuck":
                 return GreenDuck(x, y, animations)
-            
-
-    
+        raise ValueError(f"Unknown duck type: {duck_type}")

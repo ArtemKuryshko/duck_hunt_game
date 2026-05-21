@@ -2,6 +2,7 @@ import pygame
 from abc import ABC, abstractmethod
 from .base import BaseEffect
 
+
 class Explosion(BaseEffect, ABC):
     def __init__(self, x, y, duration, size):
         super().__init__(x, y, duration)
@@ -18,8 +19,7 @@ class Explosion(BaseEffect, ABC):
         if self.timer <= 0:
             self.kill()
             return
-        
+
         # Simple fade out effect
         self.alpha = max(0, int((self.timer / self.max_duration) * 255))
         self.image.set_alpha(self.alpha)
-
