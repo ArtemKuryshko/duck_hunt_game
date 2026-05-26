@@ -1,3 +1,4 @@
+import os
 from unittest.mock import Mock
 
 import pytest
@@ -77,10 +78,10 @@ def test_duck_factory_loads_and_groups_animation_frames(monkeypatch, reset_duck_
     animations = DuckFactory.load_duck_animations("WhiteDuck")
 
     assert list(animations) == ["Side", "Up", "Diagonal", "Dead"]
-    assert [frame["path"].split("/")[-1] for frame in animations["Side"]] == ["Side_1.png"]
-    assert [frame["path"].split("/")[-1] for frame in animations["Up"]] == ["Up_1.png"]
-    assert [frame["path"].split("/")[-1] for frame in animations["Diagonal"]] == ["Diagonal_1.png", "Diagonal_2.png"]
-    assert [frame["path"].split("/")[-1] for frame in animations["Dead"]] == ["Dead.png"]
+    assert [os.path.basename(frame["path"]) for frame in animations["Side"]] == ["Side_1.png"]
+    assert [os.path.basename(frame["path"]) for frame in animations["Up"]] == ["Up_1.png"]
+    assert [os.path.basename(frame["path"]) for frame in animations["Diagonal"]] == ["Diagonal_1.png", "Diagonal_2.png"]
+    assert [os.path.basename(frame["path"]) for frame in animations["Dead"]] == ["Dead.png"]
     assert all(frame["size"] == (150, 150) for frame in scaled_images)
     assert all("README.txt" not in path for path in loaded_paths)
 
