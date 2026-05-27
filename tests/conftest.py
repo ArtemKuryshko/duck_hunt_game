@@ -13,6 +13,8 @@ SRC = ROOT / "src"
 if str(SRC) not in sys.path:
     sys.path.insert(0, str(SRC))
 
+from core.game import Game
+from ui.shop import Shop
 from systems.inventory_manager import InventoryManager
 from systems.level_manager import LevelManager
 from systems.point_manager import PointManager
@@ -92,9 +94,59 @@ def level_manager(score_system):
 
 
 @pytest.fixture
-def mock_animations():
-    mock_surf = MagicMock(spec=pygame.Surface)
-    mock_surf.get_rect.return_value = pygame.Rect(0, 0, 150, 150)
+def mock_surf():
+    surf = MagicMock(spec=pygame.Surface)
+    surf.get_rect.return_value = pygame.Rect(0, 0, 150, 150)
+    surf.get_width.return_value = 150
+    surf.get_height.return_value = 150
+    surf.convert.return_value = surf
+    surf.convert_alpha.return_value = surf
+    return surf
+
+
+@pytest.fixture
+def mock_font_obj():
+    font = MagicMock(spec=pygame.font.Font)
+    font.render.return_value = pygame.Surface((10, 10))
+    return font
+
+
+@pytest.fixture
+def mock_pygame_env(monkeypatch, mock_surf, mock_font_obj):
+    """Mocks common pygame modules to avoid window creation and hardware dependency."""
+    # Display
+    mock_display = MagicMock()
+    monkeypatch.setattr("pygame.display.set_mode", lambda _: mock_display)
+    monkeypatch.setattr("pygame.display.set_caption", lambda _: None)
+    monkeypatch.setattr("pygame.display.flip", lambda: None)
+
+    # Init/Quit
+    monkeypatch.setattr("pygame.init", lambda: None)
+    monkeypatch.setattr("pygame.quit", lambda: None)
+
+    # Images
+    monkeypatch.setattr("pygame.image.load", lambda _: mock_surf)
+    monkeypatch.setattr("pygame.transform.scale", lambda img, size: img)
+    monkeypatch.setattr("pygame.transform.smoothscale", lambda img, size: img)
+
+    # Fonts
+    monkeypatch.setattr("pygame.font.Font", lambda *args: mock_font_obj)
+    monkeypatch.setattr("pygame.font.SysFont", lambda *args, **kwargs: mock_font_obj)
+
+    # Clock
+    mock_clock = MagicMock(spec=pygame.time.Clock)
+    mock_clock.get_time.return_value = 16
+    monkeypatch.setattr("pygame.time.Clock", lambda: mock_clock)
+
+    # Mouse
+    monkeypatch.setattr("pygame.mouse.set_visible", lambda _: None)
+    monkeypatch.setattr("pygame.mouse.get_pos", lambda: (400, 300))
+
+    return mock_display
+
+
+@pytest.fixture
+def mock_animations(mock_surf):
     return {
         "Side": [mock_surf],
         "Up": [mock_surf],
@@ -114,3 +166,27 @@ def mock_trajectory_class(monkeypatch):
     mock_class = MagicMock(return_value=mock_traj)
     monkeypatch.setattr("entities.birds.base.BirdTrajectory", mock_class)
     return mock_traj
+
+
+@pytest.fixture
+def shop(mock_pygame_env, point_manager, inventory_manager):
+    """Creates a Shop instance with mocked dependencies."""
+    return Shop(point_manager, inventory_manager)
+
+
+@pytest.fixture
+def game(mock_pygame_env, monkeypatch):
+    """Creates a Game instance with mocked internal systems."""
+    # Mock UI and Systems to avoid side effects (file I/O, complex logic)
+    systems = [
+        "Menu", "Shop", "UISystem", "ScoreSystem",
+        "LevelManager", "PointManager", "InventoryManager", "SettingsManager"
+    ]
+    for system in systems:
+        monkeypatch.setattr(f"core.game.{system}", MagicMock())
+
+    # Mock WeaponFactory
+    mock_weapon = MagicMock()
+    monkeypatch.setattr("core.game.WeaponFactory.create_weapon", lambda _: mock_weapon)
+
+    return Game()
