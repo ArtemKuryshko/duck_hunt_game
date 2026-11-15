@@ -1,0 +1,10 @@
+venv/
+__pycache__/
+*.pyc
+GEMINI.md
+.geminiignore
+package-lock.json
+package.json
+src/inventory.json
+src/points.json
+src/settings.json
